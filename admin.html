@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TourWings Admin Panel</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <h1 class="brand-text">🛠️ TourWings Admin</h1>
+      <nav class="nav">
+        <a href="index.html" class="nav-link">← Back to Site</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <h2 class="section-title">Manage Tour Packages</h2>
+
+    <!-- Create new tour form -->
+    <form id="createTourForm" class="card" style="padding:20px; margin-bottom:20px;">
+      <h3>Create New Tour</h3>
+      <input type="text" name="name" placeholder="Tour Name" required><br>
+      <input type="text" name="location" placeholder="Location" required><br>
+      <input type="number" name="price" placeholder="Price (BDT)" required><br>
+      <input type="date" name="date" required><br>
+      <input type="url" name="image" placeholder="Image URL"><br>
+      <textarea name="description" placeholder="Description"></textarea><br>
+      <button type="submit" class="btn">Create Tour</button>
+    </form>
+
+    <!-- Tour List -->
+    <div id="adminTourList" class="grid"></div>
+  </main>
+
+
+  <!-- View Tour Modal -->
+<div id="viewTourModal" class="modal" hidden>
+  <div class="modal-content">
+    <span id="closeViewModal" class="close">&times;</span>
+    <h2 class="modal-title">Tour Details</h2>
+    <div class="modal-body"></div>
+  </div>
+</div>
+
+
+
+<!-- Bookings Modal -->
+<div id="bookingsModal" class="modal" hidden>
+  <div class="modal-content">
+    <span class="close" onclick="document.getElementById('bookingsModal').setAttribute('hidden', 'true')">&times;</span>
+    <h2 class="modal-title">Bookings</h2>
+    <div class="modal-body"></div>
+  </div>
+</div>
+
+
+
+  <script src="assets/js/admin.js"></script>
+</body>
+</html>

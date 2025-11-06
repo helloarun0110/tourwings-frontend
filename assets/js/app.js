@@ -110,14 +110,164 @@ function createCard(t){
   }
 
   const actions = document.createElement('div');
-  actions.className = 'card-actions';
   actions.innerHTML = `
-    <a class="btn" href="/payment.html?tourId=${encodeURIComponent(t.id)}" data-book>Book Now</a>`;
+  <button class="btn" onclick="openBookingModal(${t.id})">Book Now</button>`;
+
   body.appendChild(actions);
 
   article.appendChild(body);
   return article;
 }
+
+
+
+async function login(email, password) {
+  const response = await fetch("http://127.0.0.1:8000/auth/login", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      email: email,
+      password: password
+    }),
+  });
+
+  if (response.ok) {
+    const data = await response.json();
+    localStorage.setItem("token", data.access_token);
+    alert("✅ Login successful!");
+    toggleModal("loginmodal", false);
+    await loadTours(); // optional refresh after login
+  } else {
+    const error = await response.json();
+    alert("❌ Login failed. " + error.detail);
+  }
+}
+
+
+
+
+
+async function register(email, password, full_name) {
+  const response = await fetch("http://127.0.0.1:8000/auth/register", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      email: email,
+      password: password,
+      full_name: full_name
+    }),
+  });
+
+  if (response.ok) {
+    const data = await response.json();
+    alert("✅ Registration successful! You can now log in.");
+    toggleModal("registermodal", false);
+  } else {
+    const error = await response.json();
+    alert("❌ Registration failed. " + error.detail);
+  }
+}
+
+
+
+
+document.getElementById("registerform").addEventListener("submit", async (e) => {
+  e.preventDefault(); // prevent page reload
+
+  const email = document.getElementById("regemail").value;
+  const password = document.getElementById("regpass").value;
+  const full_name = document.getElementById("regname").value;
+
+  try {
+    await register(email, password, full_name);
+  } catch (err) {
+    console.error(err);
+    alert("⚠️ Registration failed. Please try again.");
+  }
+});
+
+
+
+
+
+
+// === LOGIN FORM HANDLER ===
+document.getElementById("loginform").addEventListener("submit", async (e) => {
+  e.preventDefault(); // stop reload
+
+  const email = document.getElementById("loginemail").value;
+  const password = document.getElementById("loginpass").value;
+
+  try {
+    await login(email, password); // call the async login() you defined
+  } catch (err) {
+    console.error(err);
+    alert("⚠️ Login failed. Please try again.");
+  }
+});
+
+
+
+
+
+document.getElementById("bookingform").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const form = e.target;
+  const formData = Object.fromEntries(new FormData(form));
+
+  if (!selectedTourId) {
+    alert("Please select a tour to book.");
+    return;
+  }
+
+  const token = localStorage.getItem("token");
+  if (!token) {
+    alert("⚠️ You must be logged in to book a tour!");
+    toggleModal("loginmodal", true);
+    return;
+  }
+
+  // ✅ Parse number properly
+  formData.persons = parseInt(formData.persons);
+  formData.tour_id = selectedTourId;
+
+  try {
+    const res = await fetch(`${API_BASE}/booking/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify(formData)
+    });
+
+    const data = await res.json(); // read response always
+
+    if (!res.ok) {
+      console.error("Booking API error:", data);
+      throw new Error(data.detail || "Booking failed");
+    }
+
+    alert(`✅ Booking successful! Total price: ${data.total_price} BDT`);
+    toggleModal("bookingmodal", false);
+    form.reset();
+
+  } catch (err) {
+    console.error("Booking error:", err);
+    alert("❌ Could not complete booking. Please try again.");
+  }
+});
+
+
+
+
+
+
 
 function render(){
   renderStatus();
@@ -171,6 +321,14 @@ function toggleModal(id, show) {
 
 document.getElementById("loginbtn").addEventListener("click", () => toggleModal("loginmodal", true));
 document.getElementById("registerbtn").addEventListener("click", () => toggleModal("registermodal", true));
+
+let selectedTourId = null;
+
+function openBookingModal(tour_id){
+  selectedTourId = tour_id;
+  toggleModal("bookingmodal", true);
+}
+
 document.querySelectorAll(".close").forEach(el=>{
   el.addEventListener("click", ()=> toggleModal(el.getAttribute("data-close"), false));
 });
@@ -179,3 +337,5 @@ document.querySelectorAll(".modal").forEach(modal=>{
     if(e.target===modal) modal.setAttribute("hidden", "true");
   });
 });
+
+

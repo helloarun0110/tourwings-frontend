@@ -142,7 +142,7 @@
 
 <!--login modal-->
 <div id="loginmodal" class="modal" hidden>
-  <div class="modal-content">
+  <div class="modal-content modal-dark">
     <span class="close" data-close="loginmodal">&times;</span>
     <h2>Login</h2>
     <form id="loginform">
@@ -156,18 +156,42 @@
 
 <!--register modal-->
 <div id="registermodal" class="modal" hidden>
-  <div class="modal-content">
+  <div class="modal-content modal-dark">
     <span class="close" data-close="registermodal">&times;</span>
     <h2>Register</h2>
     <form id="registerform">
       <input type="email" placeholder="Email" id="regemail" required>
       <input type="password" placeholder="Password" id="regpass" required>
       <input type="name" placeholder="Name" id="regname" required>
-      <input type="tel" placeholder="Phone" id="regtel" required>
       <button type="submit" class="btn">Register</button>
     </form>
   </div>
 </div>
+
+
+<!-- booking modal -->
+<div id="bookingmodal" class="modal" hidden>
+  <div class="modal-content modal-dark">
+    <span class="close" data-close="bookingmodal">&times;</span>
+    <h2>Book This Tour</h2>
+    <form id="bookingform">
+      <label>
+        Age:
+        <input type="number" name="age" required>
+      </label>
+      <label>
+        Number of Persons:
+        <input type="number" name="persons" min="1" required>
+      </label>
+      <label>
+        Notes / Special Info:
+        <textarea name="notes" placeholder="Any health issues or special requests"></textarea>
+      </label>
+      <button type="submit" class="btn">Confirm Booking</button>
+    </form>
+  </div>
+</div>
+
   <script src="assets/js/app.js"></script>
 </body>
 </html>
